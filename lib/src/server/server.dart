@@ -153,6 +153,8 @@ class ConnectionServer {
       }
       _connections.remove(connection);
       handlers.remove(connection);
+      print(
+          'onDone closing dataNotifier ${onDataReceivedController.hashCode} sink ${onDataReceivedController.sink.hashCode}');
       await onDataReceivedController.close();
     });
   }

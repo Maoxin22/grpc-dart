@@ -151,7 +151,8 @@ class _GrpcMessageConversionSink
       try {
         _addData(chunk);
       } on StateError catch (e, st) {
-        throw StateError('Error: ${e.message}\nChunk: ${chunk.toString()}\nIsEndStream:${chunk.endStream}\nStack Trace:\n$st');
+        throw StateError(
+            'Error: ${e.message}\nChunk: ${chunk.toString()}\nIsEndStream:${chunk.endStream}\nStack Trace:\n$st');
       }
     } else if (chunk is HeadersStreamMessage) {
       _addHeaders(chunk);

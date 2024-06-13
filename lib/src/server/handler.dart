@@ -289,7 +289,18 @@ class ServerHandler extends ServiceCall {
       return;
     }
 
-    onDataReceived?.add(null);
+    try {
+      onDataReceived?.add(null);
+    } on StateError catch (e, st) {
+      print(
+          '_onDataActive sending ping to data notifier sink ${onDataReceived?.hashCode} but the sink is closed, rethrowing with more info. ErrorMessage=${e.message}, StackTrace=$st. GrpcMessage is ${message.toString()}, isCompressed=${message.isCompressed}, rawData=${message.data.toString()}.');
+      throw StateError('${e.message} On closed sink ${onDataReceived.hashCode}');
+    } catch (e, st) {
+      print(
+          '_onDataActive sending ping when receiving data but got error for sink ${onDataReceived?.hashCode}, rethrowing. ErrorMessage=$e, StackTrace=$st. GrpcMessage is ${message.toString()}, isCompressed=${message.isCompressed}, rawData=${message.data.toString()}.');
+      rethrow;
+    }
+
     final data = message;
     Object? request;
     try {
