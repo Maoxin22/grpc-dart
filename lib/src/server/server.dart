@@ -141,7 +141,10 @@ class ConnectionServer {
       handlers[connection]!.add(handler);
     }, onError: (error, stackTrace) {
       if (error is Error) {
+        print('connection onError throwing to Zone $error. Stack Trace: $stackTrace');
         Zone.current.handleUncaughtError(error, stackTrace);
+      } else {
+        print('connection onError omitting ${error.runtimeType}');
       }
     }, onDone: () async {
       // TODO(sigurdm): This is not correct behavior in the presence of
@@ -153,8 +156,7 @@ class ConnectionServer {
       }
       _connections.remove(connection);
       handlers.remove(connection);
-      print(
-          'onDone closing dataNotifier ${onDataReceivedController.hashCode} sink ${onDataReceivedController.sink.hashCode}');
+      print('connection onDone closing dataNotifier sink ${onDataReceivedController.sink.hashCode}');
       await onDataReceivedController.close();
     });
   }
