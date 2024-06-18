@@ -289,15 +289,20 @@ class ServerHandler extends ServiceCall {
       return;
     }
 
+    var now = DateTime.now().toUtc().toIso8601String();
+    if (now.endsWith('Z')) {
+      now = now.substring(0, now.length - 1);
+    }
     try {
       onDataReceived?.add(null);
     } on StateError catch (e, st) {
       print(
-          '_onDataActive sending ping to data notifier sink ${onDataReceived?.hashCode} but the sink is closed, rethrowing with more info. ErrorMessage=${e.message}, StackTrace=$st. GrpcMessage is ${message.toString()}, isCompressed=${message.isCompressed}, rawData=${message.data.toString()}.');
-      throw StateError('${e.message} On closed sink ${onDataReceived.hashCode}');
+          '{"level":"warn","msg":"_onDataActive sending ping to data notifier sink ${onDataReceived?.hashCode} but the sink is closed, rethrowing with more info. ErrorMessage=${e.message}, StackTrace=$st. GrpcMessage is ${message.toString()}, isCompressed=${message.isCompressed}, rawData=${message.data.toString()}.","isolate":"main","timestamp":"$now"}');
+      throw StateError(
+          '${e.message} On closed sink ${onDataReceived.hashCode}');
     } catch (e, st) {
       print(
-          '_onDataActive sending ping when receiving data but got error for sink ${onDataReceived?.hashCode}, rethrowing. ErrorMessage=$e, StackTrace=$st. GrpcMessage is ${message.toString()}, isCompressed=${message.isCompressed}, rawData=${message.data.toString()}.');
+          '{"level":"warn","msg":"_onDataActive sending ping when receiving data but got error for sink ${onDataReceived?.hashCode}, rethrowing. ErrorMessage=$e, StackTrace=$st. GrpcMessage is ${message.toString()}, isCompressed=${message.isCompressed}, rawData=${message.data.toString()}.","isolate":"main","timestamp":"$now"}');
       rethrow;
     }
 

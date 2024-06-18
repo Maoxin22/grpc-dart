@@ -140,11 +140,17 @@ class ConnectionServer {
       handler.onCanceled.then((_) => handlers[connection]?.remove(handler));
       handlers[connection]!.add(handler);
     }, onError: (error, stackTrace) {
+      var now = DateTime.now().toUtc().toIso8601String();
+      if (now.endsWith('Z')) {
+        now = now.substring(0, now.length - 1);
+      }
       if (error is Error) {
-        print('connection onError throwing to Zone $error. Stack Trace: $stackTrace');
+        print(
+            '{"level":"warn","msg":"connection onError throwing to Zone $error. sink ${onDataReceivedController.sink.hashCode}. Stack Trace: $stackTrace","isolate":"main","timestamp":"$now"}');
         Zone.current.handleUncaughtError(error, stackTrace);
       } else {
-        print('connection onError omitting ${error.runtimeType}');
+        print(
+            '{"level":"warn","msg":"connection onError omitting ${error.runtimeType}, sink ${onDataReceivedController.sink.hashCode}. Stack Trace: $stackTrace","isolate":"main","timestamp":"$now"}');
       }
     }, onDone: () async {
       // TODO(sigurdm): This is not correct behavior in the presence of
@@ -156,7 +162,12 @@ class ConnectionServer {
       }
       _connections.remove(connection);
       handlers.remove(connection);
-      print('connection onDone closing dataNotifier sink ${onDataReceivedController.sink.hashCode}');
+      var now = DateTime.now().toUtc().toIso8601String();
+      if (now.endsWith('Z')) {
+        now = now.substring(0, now.length - 1);
+      }
+      print(
+          '{"level":"warn","msg":"connection onDone closing dataNotifier sink ${onDataReceivedController.sink.hashCode}","isolate":"main","timestamp":"$now"}');
       await onDataReceivedController.close();
     });
   }
