@@ -146,11 +146,11 @@ class ConnectionServer {
       }
       if (error is Error) {
         print(
-            '{"level":"warn","msg":"connection onError throwing to Zone $error. sink ${onDataReceivedController.sink.hashCode}. Stack Trace: $stackTrace","isolate":"main","timestamp":"$now"}');
+            'connection onError throwing to Zone $error. sink ${onDataReceivedController.sink.hashCode}. Stack Trace: $stackTrace');
         Zone.current.handleUncaughtError(error, stackTrace);
       } else {
         print(
-            '{"level":"warn","msg":"connection onError omitting ${error.runtimeType}, sink ${onDataReceivedController.sink.hashCode}. Stack Trace: $stackTrace","isolate":"main","timestamp":"$now"}');
+            'connection onError omitting ${error.runtimeType}, sink ${onDataReceivedController.sink.hashCode}. Stack Trace: $stackTrace');
       }
     }, onDone: () async {
       // TODO(sigurdm): This is not correct behavior in the presence of
@@ -167,7 +167,7 @@ class ConnectionServer {
         now = now.substring(0, now.length - 1);
       }
       print(
-          '{"level":"warn","msg":"connection onDone closing dataNotifier sink ${onDataReceivedController.sink.hashCode}","isolate":"main","timestamp":"$now"}');
+          'connection onDone closing dataNotifier sink ${onDataReceivedController.sink.hashCode}');
       await onDataReceivedController.close();
     });
   }
